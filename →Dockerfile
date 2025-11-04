@@ -1,15 +1,18 @@
-# Utilise l'image Python officielle
-→FROM python:3.10
-# Définit l'environnement
+# --- Configuration de l'environnement de base ---
+FROM --platform=linux/amd64 python:3.10
+
+# Définit le répertoire de travail
 WORKDIR /app
 
-# Ligne originale: COPY requirements.txt .
+# --- Installation des dépendances ---
+# Copie le fichier de dépendances
 COPY requirements-pro.txt .
 
-# Ligne originale: RUN pip install --no-cache-dir -r requirements.txt
+# Installe les paquets
 RUN pip install --no-cache-dir -r requirements-pro.txt
 
-# Copie le reste du code de l'application
+# --- Copie du code et Lancement ---
+# Copie le reste du code
 COPY . .
 
 # Définit la commande de démarrage (utilise Gunicorn)
