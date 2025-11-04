@@ -4,9 +4,11 @@ FROM python:3.10-slim
 # Définit l'environnement
 WORKDIR /app
 
-# Copie les fichiers de dépendances et installe-les
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Ligne originale: COPY requirements.txt .
+COPY requirements-pro.txt .
+
+# Ligne originale: RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-pro.txt
 
 # Copie le reste du code de l'application
 COPY . .
