@@ -42,3 +42,5 @@ urllib3
 websockets
 Werkzeug
 yarl
+gunicorn
+psycopg2-binary
