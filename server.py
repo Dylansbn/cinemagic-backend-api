@@ -11,16 +11,16 @@ import stripe
 # --- 1. INITIALISATION ---
 load_dotenv()
 
-# Clés secrètes du .env
+# Clés secrètes du .env / Rendu
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") # Utilisez ce nom pour la clé secrète
-STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
+SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") # Utilise le nom de la variable Render
+STRIPE_WH_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_PRICE_ID = os.environ.get("STRIPE_PRICE_ID")
 BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:5000") # URL de votre serveur
 
 # Initialisation des clients
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY) # Utilisez les variables définies juste au-dessus
 stripe.api_key = STRIPE_SECRET_KEY
 app = Flask(__name__)
 
