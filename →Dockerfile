@@ -16,4 +16,4 @@ RUN pip install --no-cache-dir -r requirements-pro.txt
 COPY . .
 
 # Définit la commande de démarrage (utilise Gunicorn)
-CMD gunicorn --bind 0.0.0.0:$PORT server:app
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT} server:app"]
