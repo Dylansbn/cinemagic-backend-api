@@ -13,8 +13,8 @@ load_dotenv()
 
 # Clés secrètes du .env
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
-STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") # Utilisez ce nom pour la clé secrète
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
 STRIPE_PRICE_ID = os.environ.get("STRIPE_PRICE_ID")
 BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:5000") # URL de votre serveur

@@ -4,4 +4,3 @@ psycopg2-binary
 stripe
 supabase
 python-dotenv
-# Ajoutez ici uniquement les autres paquets que VOUS utilisez directement (pas les sous-dépendances)
