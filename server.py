@@ -21,6 +21,7 @@ BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:5000") # URL de vo
 
 # Initialisation des clients
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY) # Utilisez les variables définies juste au-dessus
+# Ligne 24 corrigée (en supposant que vous importez 'stripe')
 stripe.api_key = STRIPE_SECRET_KEY
 app = Flask(__name__)
 
