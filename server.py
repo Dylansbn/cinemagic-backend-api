@@ -22,8 +22,18 @@ BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:5000") # URL de vo
 # Initialisation des clients
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY) # Utilisez les variables définies juste au-dessus
 # Ligne 24 corrigée (en supposant que vous importez 'stripe')
-stripe.api_key = STRIPE_SECRET_KEY
-app = Flask(__name__)
+# Importez os si ce n'est pas déjà fait en haut du fichier
+import os 
+
+# ... [Autre code]
+
+# Définition de l'API Key de Stripe
+stripe.api_key = os.environ.get("STRIPE_SECRET_KEY") # Utilisez directement os.environ.get
+
+# Ligne 25 (ou similaire) : L'objet Flask DOIT s'appeler 'app'
+app = Flask(__name__) 
+
+# ...
 
 # --- 2. FONCTIONS UTILITAIRES DE LA BASE DE DONNÉES ---
 
