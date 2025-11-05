@@ -8,13 +8,15 @@ WORKDIR /app
 # COPY requirements-pro.txt .
 # RUN pip install --no-cache-dir -r requirements-pro.txt
 
-# Nouvelles lignes (Correctes) :
-COPY requirements.txt .
+# Lignes 13-14:
 RUN pip install --no-cache-dir -r requirements.txt
 
-# --- Copie du code et Lancement ---
-# Copie le reste du code
+# Lignes 16-17:
+# Copie le reste du code de l'application
 COPY . .
 
-# Définit la commande de démarrage (utilise Gunicorn)
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT} server:app"]
+# NOUVEAU: Expose le port de l'application
+EXPOSE 8000
+
+# Ligne 20: Définit la commande de démarrage (utilise Gunicorn)
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "server:app"]
