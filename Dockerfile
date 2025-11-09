@@ -1,27 +1,26 @@
-# Fichier: Dockerfile - CODE FINAL CORRIGÉ ET ROBUSTE
+# Fichier: Dockerfile — VERSION FINALE STABLE POUR RAILWAY
 
-# Utilise l'image Python officielle et spécifie l'architecture AMD64
+# Utilise l'image Python officielle (AMD64 pour compatibilité Railway)
 FROM --platform=linux/amd64 python:3.10
 
 # Définit le répertoire de travail
 WORKDIR /app
 
-# Installe les dépendances système nécessaires
+# Installe les dépendances système nécessaires (PostgreSQL, build tools, etc.)
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copie et installe les paquets
+# Copie et installe les dépendances Python
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copie le reste du code de l'application
+# Copie tout le code du projet dans le conteneur
 COPY . .
 
-# Déclaration du port
+# Déclare le port exposé (Railway attribue dynamiquement $PORT)
 EXPOSE 8000
 
-# CORRECTION FINALE CRITIQUE: Commande de démarrage dynamique et robuste
-# Utilise sh -c pour interpréter la variable $PORT de l'hébergeur
-CMD ["sh", "-c", "python -m gunicorn server:app --bind 0.0.0.0:${PORT}"]
+# Commande de démarrage : lance Gunicorn sur la variable $PORT fournie par Railway
+CMD ["gunicorn", "server:app", "--bind", "0.0.0.0:${PORT}"]
