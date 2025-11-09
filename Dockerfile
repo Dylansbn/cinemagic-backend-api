@@ -1,27 +1,27 @@
-# --- Configuration de l'environnement de base ---
+# Fichier: Dockerfile - CODE FINAL CORRIGÉ ET ROBUSTE
+
+# Utilise l'image Python officielle et spécifie l'architecture AMD64
 FROM --platform=linux/amd64 python:3.10
 
 # Définit le répertoire de travail
 WORKDIR /app
-# Installer les dépendances système nécessaires
+
+# Installe les dépendances système nécessaires
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
-# Anciennes lignes (qui pointaient vers un fichier qui n'existe pas) :
+
+# Copie et installe les paquets
 COPY requirements.txt .
-
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Lignes 13-14:
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Lignes 16-17:
 # Copie le reste du code de l'application
 COPY . .
 
-# NOUVEAU: Expose le port de l'application
+# Déclaration du port
 EXPOSE 8000
 
-# Ligne 20: Définit la commande de démarrage (utilise Gunicorn)
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT} server:app"]
+# CORRECTION FINALE CRITIQUE: Commande de démarrage dynamique et robuste
+# Utilise sh -c pour interpréter la variable $PORT de l'hébergeur
+CMD ["sh", "-c", "python -m gunicorn server:app --bind 0.0.0.0:${PORT}"]
