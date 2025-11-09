@@ -24,4 +24,4 @@ COPY . .
 EXPOSE 8000
 
 # Ligne 20: Définit la commande de démarrage (utilise Gunicorn)
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "server:app"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT} server:app"]

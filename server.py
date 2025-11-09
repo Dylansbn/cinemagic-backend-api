@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from supabase import create_client, Client
 import stripe
-from flask_cors import CORS  # <-- CORRECTION: Importation de Flask-CORS
+from flask_cors import CORS 
 
 # --- 1. INITIALISATION ---
 load_dotenv()
@@ -26,6 +26,7 @@ stripe.api_key = STRIPE_SECRET_KEY # Définition de l'API Key de Stripe
 app = Flask(__name__) 
 
 # CORRECTION CRITIQUE: Configuration CORS pour autoriser le Front-end
+# Il faut absolument autoriser l'URL d'où vient la requête (localhost:3000)
 CORS(app, origins=["http://localhost:3000", "https://cinemagic-backend-api-production.up.railway.app"])
 
 
@@ -66,13 +67,16 @@ def create_checkout_session():
 
     try:
         # Étape 1: Créer ou récupérer le client Stripe
+        # NOTE: Cette ligne suppose qu'un profil existe déjà pour l'utilisateur.
         profile = supabase.table('profiles').select('stripe_customer_id').eq('id', user_id).single().execute().data
         customer_id = profile.get('stripe_customer_id') if profile else None
         
         if not customer_id:
+            # Si le client n'existe pas, on le crée dans Stripe
             customer = stripe.Customer.create(metadata={'supabase_user_id': user_id})
             customer_id = customer.id
-            update_user_subscription(user_id, 'free', customer_id) # Initialiser le statut
+            # On met à jour la base Supabase avec l'ID du client Stripe
+            update_user_subscription(user_id, 'free', customer_id) 
 
         # Étape 2: Créer la session de checkout Stripe
         checkout_session = stripe.checkout.Session.create(
@@ -86,42 +90,37 @@ def create_checkout_session():
                 },
             ],
             mode='subscription',
-            success_url=f"{return_url}/dashboard?session_id={{CHECKOUT_SESSION_ID}}", # Rediriger vers le dashboard
-            cancel_url=f"{return_url}/pricing", # Rediriger vers la page des prix si annulation
+            # Rediriger vers le dashboard après succès
+            success_url=f"{return_url}/dashboard?session_id={{CHECKOUT_SESSION_ID}}&success=true", 
+            # Rediriger vers la page des prix si annulation
+            cancel_url=f"{return_url}/pricing", 
             subscription_data={
-                'trial_period_days': 7, # Essai gratuit de 7 jours
+                # On ne met pas d'essai gratuit si l'utilisateur choisit le plan payant
+                'trial_period_days': 0, 
             }
         )
-        return jsonify({'url': checkout_session.url})
+        return jsonify({'url': checkout_session.url}), 200
 
     except Exception as e:
         print(f"❌ Erreur Stripe: {e}")
-        return jsonify({'error': str(e)}), 403
+        # Retourner une erreur 400 ou 500 en cas de problème Stripe
+        return jsonify({'error': str(e)}), 500
 
 # --- 4. LOGIQUE WEBHOOK (Appelée par Stripe) ---
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
     """Gère les événements de paiement Stripe et met à jour Supabase."""
-    # NOTE: Code omis pour la concision - il est fonctionnel
+    # NOTE: Le code complet des webhooks est complexe et nécessite des vérifications de signature.
+    # On simule un succès ici pour la démonstration.
     return jsonify(success=True)
 
 # --- 5. LOGIQUE DE MONTAGE VIDEO (Le Cœur de l'IA - Appelée par le Front-end) ---
 
-def check_user_quota(user_id):
-    """Vérifie si l'utilisateur a le droit de lancer un montage (quota 1/1 ou abonnement actif)."""
-    # NOTE: Code omis pour la concision - il est fonctionnel
-    return True, "Montage autorisé."
-
-def process_video_montage(user_id, video_path, theme):
-    """Simule la logique complexe de montage vidéo IA."""
-    # NOTE: Code omis pour la concision - il est fonctionnel
-    return "http://localhost:3000/videos/montage_simule.mp4"
-
 @app.route('/montage-video', methods=['POST'])
 def start_montage():
     """Point d'entrée pour le Front-end pour lancer un montage."""
-    # NOTE: Code omis pour la concision - il est fonctionnel
+    # NOTE: Cette fonction simulerait le lancement d'un job IA.
     return jsonify({
         "message": "Montage lancé avec succès!", 
         "result_url_mock": "http://localhost:3000/videos/montage_simule.mp4"
@@ -129,6 +128,6 @@ def start_montage():
 
 # --- 6. LANCEMENT DU SERVEUR ---
 
- # if __name__ == '__main__':
-#     # Flask utilise le port 5000 par défaut
-#     app.run(debug=True)
+if __name__ == '__main__':
+    # Flask utilise le port 5000 par défaut
+    app.run(host='0.0.0.0', port=5000, debug=True)
